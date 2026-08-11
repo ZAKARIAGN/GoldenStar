@@ -1,0 +1,11 @@
+# Old backend (Python)
+backend/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.sw?
