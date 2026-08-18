@@ -1,4 +1,5 @@
 import db from "../config/db.js"
+import axios from "axios"
 
 export const addCombo = async (data, images) => {
     const { name, description, price, items } = data;
@@ -75,10 +76,10 @@ export const addCombo = async (data, images) => {
 
 
 
-export const updateCombo = async (Id, data, image) => {
+export const updateCombo = async (Id, data, images) => {
     const { name, description, price, items } = data;
     const parsedItems = typeof items === "string" ? JSON.parse(items) : items;
-    const image = image?.path;
+    const image = images?.path;
     const errors = {};
 
     const [combo] = await db.query("select * from combos where id = ?", [Id]);
@@ -170,7 +171,22 @@ export const deleteComboService = async (Id) => {
 
 
 
-export const getAllcombos = async () => {
+export const getAllMenuItems = async (userId) => {
+    const response = await axios.get(
+        "http://menu-service:5002/menu/get-all-items",
+        {
+            headers: {
+                "x-user-id": userId
+            }
+        }
+    );
+
+    return response.data.data;
+};
+
+
+
+export const getAllcombos = async (userId) => {
     try {
         const [combos] = await db.query(`
             SELECT 
@@ -184,7 +200,37 @@ export const getAllcombos = async () => {
             FROM combos c
             LEFT JOIN combo_items ci ON c.id = ci.combo_id
         `);
-        return combos;
+
+        const items = await getAllMenuItems(userId);
+        const comboMap = new Map();
+        for (const combo of combos) {
+            if (!comboMap.has(combo.id)) {
+                comboMap.set(combo.id, {
+                    id: combo.id,
+                    name: combo.name,
+                    description: combo.description,
+                    price: combo.price,
+                    image: combo.image,
+                    items: []
+                })
+            }
+
+
+            if (combo.item_id !== null) {
+                const item = items.find(i => i.id === combo.item_id)
+                if (item) {
+                    comboMap.get(combo.id).items.push({
+                        item_id: combo.item_id,
+                        quantity: combo.quantity,
+                        name: item.name,
+                        price: item.price,
+                        image: item.image
+                    })
+                }
+            }
+        }
+
+        return Array.from(comboMap.values());
     } catch (error) {
         if (error.response) {
             throw error;
