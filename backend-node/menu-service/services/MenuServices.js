@@ -3,11 +3,10 @@ import db from "../config/db.js";
 
 export const getAllItems = async () => {
     try {
-        const [result] = await db.query("select * from items");
+        const [result] = await db.query("select items.*, count(reviews.id) as total_review, round(avg(reviews.rating),1) as avg_rating from items left join reviews on items.id = reviews.item_id group by items.id");
 
         return result;
     } catch (error) {
-
         const dbError = new Error("Failed to get menu items");
         dbError.statusCode = 500;
         throw dbError;
