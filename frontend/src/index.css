@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --borderColor: #775c2d;
+  --titleColor: #b5821d;
+  --InputBgColor: #221e1c;
+  --LightGold: #d4af37;
+  --WarmTaupe: #a69988;
+  --sideBarBgColor: #150f0a;
+  --sideBarHover: #31260f;
+  --mainBg: #080504;
+  --BaseGold: #d4af37;
+  --DarkGold: #b8860b;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.7s ease-out forwards;
+}
+
+@font-face {
+  font-family: "ZenithaClassic";
+  src: url("./assets/fonts/ZenithaClassic_PERSONAL_USE_ONLY.otf")
+    format("openType");
+}
+
+@font-face {
+  font-family: "Ralgine";
+  src: url("./assets/fonts/Ralgine DEMO VERSION.otf") format("openType");
+}
+
+@font-face {
+  font-family: "Esmarya";
+  src: url("./assets/fonts/EsmaryaDemo-Regular.otf") format("openType");
+}
+
+
+@font-face {
+  font-family: "AppleGaramond";
+  src: url("./assets/fonts/AppleGaramond.ttf") format("TrueType");
+}
