@@ -4,7 +4,7 @@ import axios from "axios"
 export const addCombo = async (data, images) => {
     const { name, description, price, items } = data;
     const parsedItems = typeof items === "string" ? JSON.parse(items) : items;
-    const image = images.path;
+    const image = images?.path;
     const errors = {}
 
     if (!name || name.trim() === "") {
@@ -123,7 +123,11 @@ export const updateCombo = async (Id, data, images) => {
     try {
         await connection.beginTransaction();
 
-        await connection.query("update combos set name = ?, description = ?, price = ? where id = ?", [name, description, Number(price), Id]);
+        if (image) {
+            await connection.query("update combos set name = ?, description = ?, price = ?, image = ? where id = ?", [name, description, Number(price), image, Id]);
+        } else {
+            await connection.query("update combos set name = ?, description = ?, price = ? where id = ?", [name, description, Number(price), Id]);
+        }
 
         await connection.query("delete from combo_items where combo_id = ?", [Id]);
 
@@ -160,12 +164,24 @@ export const deleteComboService = async (Id) => {
         error.statusCode = 404;
         throw error;
     }
+
+    const connection = await db.getConnection();
     try {
-        await db.query("delete from combos where id = ?", [Id]);
+        await connection.beginTransaction();
+        await connection.query("delete from combo_items where combo_id = ?", [Id]);
+        await connection.query("delete from combos where id = ?", [Id]);
+        await connection.commit();
     } catch (error) {
+        if (connection) {
+            await connection.rollback();
+        }
         const dbError = new Error("Failed to delete combo");
         dbError.statusCode = 500;
         throw dbError;
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }
 
@@ -195,6 +211,7 @@ export const getAllcombos = async (userId) => {
                 c.description,
                 c.price,
                 c.image,
+                c.status,
                 ci.item_id,
                 ci.quantity
             FROM combos c
@@ -211,6 +228,7 @@ export const getAllcombos = async (userId) => {
                     description: combo.description,
                     price: combo.price,
                     image: combo.image,
+                    status: combo.status,
                     items: []
                 })
             }
@@ -224,7 +242,7 @@ export const getAllcombos = async (userId) => {
                         quantity: combo.quantity,
                         name: item.name,
                         price: item.price,
-                        image: item.image
+                        imageUrl: item.image_path
                     })
                 }
             }

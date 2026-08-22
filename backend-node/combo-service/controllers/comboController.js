@@ -1,4 +1,4 @@
-import { addCombo, deleteComboService, getAllcombos, getAllMenuItems } from "../services/comboServices.js";
+import { addCombo, deleteComboService, getAllcombos, getAllMenuItems, updateCombo } from "../services/comboServices.js";
 
 export const addComboController = async (req, res) => {
     const userId = req.headers["x-user-id"];
@@ -63,7 +63,7 @@ export const updateComboController = async (req, res) => {
     }
 
     try {
-        await updateComboController(Number(comboId), req.body, req.file);
+        await updateCombo(Number(comboId), req.body, req.file);
 
         return res.status(200).json({
             message: "Combo updated successfully"
@@ -109,7 +109,7 @@ export const deleteComboController = async (req, res) => {
     }
 
     try {
-        await deleteComboService(Number(comboId));
+        await deleteComboService(comboId);
 
         return res.status(200).json({
             message: "Combo deleted successfully"

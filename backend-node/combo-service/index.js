@@ -4,7 +4,7 @@ const app = express();
 
 
 app.use(express.json());
-app.use("/upload",express.static("upload"));
+app.use("/uploads",express.static("uploads"));
 
 app.use("/combo",comboRoutes);
 

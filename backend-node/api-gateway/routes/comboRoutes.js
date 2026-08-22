@@ -43,9 +43,7 @@ router.use(
     createProxyMiddleware({
         target: "http://combo-service:5003",
         changeOrigin: true,
-        pathRewrite: {
-            "^/": "/combo/update-combo/:id"
-        },
+        pathRewrite: (path, req) => `/combo/update-combo/${req.params.id}`,
         on: {
             proxyReq: (proxyReq, req) => {
                 if (req.user) {
@@ -72,9 +70,7 @@ router.use(
     createProxyMiddleware({
         target: "http://combo-service:5003",
         changeOrigin: true,
-        pathRewrite: {
-            "^": "/combo/delete-combo/:id"
-        },
+        pathRewrite: (path, req) => `/combo/delete-combo/${req.params.id}`,
         on: {
             proxyReq: (proxyReq, req) => {
                 if (req.user) {
