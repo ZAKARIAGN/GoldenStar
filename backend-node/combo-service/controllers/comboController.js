@@ -1,4 +1,4 @@
-import { addCombo, deleteComboService, getAllcombos, getAllMenuItems, updateCombo } from "../services/comboServices.js";
+import { addCombo, deleteComboService, getAllcombos, getAllMenuItems, getComboById, updateCombo } from "../services/comboServices.js";
 
 export const addComboController = async (req, res) => {
     const userId = req.headers["x-user-id"];
@@ -142,6 +142,38 @@ export const getAllcombosController = async (req, res) => {
     try {
         const combos = await getAllcombos(userId);
         return res.status(200).json(combos);
+    } catch (error) {
+        if (error.response) {
+            return res.status(error.statusCode || 500).json({
+                message: error.response.data.message
+            });
+        }
+        return res.status(error.statusCode || 500).json({
+            message: error.message
+        });
+    }
+}
+
+
+export const getComboByIdController = async (req, res) => {
+    const userId = req.headers["x-user-id"];
+    const comboId = req.params.id;
+
+    if (!userId) {
+        return res.status(401).json({
+            message: "User not authenticated"
+        });
+    }
+
+    if (!comboId) {
+        return res.status(400).json({
+            message: "Combo ID is required"
+        });
+    }
+
+    try {
+        const combo = await getComboById(Number(comboId), userId);
+        return res.status(200).json(combo);
     } catch (error) {
         if (error.response) {
             return res.status(error.statusCode || 500).json({

@@ -39,7 +39,8 @@ const UpdateFormSection = ({ selectedCombo, openUpdateForm, setOpenUpdateForm })
     const mutation = useMutation({
         mutationFn: (formData) => updateCombo(selectedCombo.id, formData),
         onSuccess: () => {
-            queryClient.invalidateQueries(["all-combos"]);
+            queryClient.invalidateQueries({ queryKey: ["combos"] });
+            queryClient.invalidateQueries({ queryKey: ["combo"] });
             toast.success("Combo updated successfully!", {
                 autoClose: 3000,
                 position: "top-right",

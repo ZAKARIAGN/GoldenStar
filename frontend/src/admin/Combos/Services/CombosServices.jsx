@@ -28,3 +28,8 @@ export const updateCombo = async (id, formData) => {
     })
     return res.data
 }
+
+export const getComboById = async (id) => {
+    const res = await Api.get(`/combo/get-combo/${id}`)
+    return res.data
+}

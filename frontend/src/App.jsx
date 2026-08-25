@@ -24,6 +24,7 @@ import AddToMenuForm from "./admin/Menu/Pages/AddToMenuForm";
 import FullMenu from "./admin/Menu/Pages/FullMenu";
 import UpdateMenuForm from "./admin/Menu/Pages/UpdateMenuForm";
 import Combos from "./admin/Combos/Pages/Combos";
+import ViewCombo from "./admin/Combos/Pages/ViewCombo";
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="menu/update-item/:id" element={<UpdateMenuForm/>}/>
               <Route path="menu/full-menu" element={<FullMenu/>}/>
               <Route path="combos" element={<Combos />} />
+              <Route path="combos/view-combo/:id" element={<ViewCombo/>}/>
             {/*   <Route path="orders" element={<Orders />} />
 
               <Route path="reservations" element={<Reservations />} /> */}

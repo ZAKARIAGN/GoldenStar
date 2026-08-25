@@ -118,4 +118,31 @@ router.use(
     })
 );
 
+router.use(
+    "/get-combo/:id",
+    authMiddleware,
+    createProxyMiddleware({
+        target: "http://combo-service:5003",
+        changeOrigin: true,
+        pathRewrite: (path, req) => `/combo/get-combo/${req.params.id}`,
+        on: {
+            proxyReq: (proxyReq, req) => {
+                if (req.user) {
+                    proxyReq.setHeader(
+                        "x-user-id",
+                        req.user.userId
+                    );
+
+                    proxyReq.setHeader(
+                        "x-user-role",
+                        req.user.role
+                    );
+                }
+                fixRequestBody(proxyReq, req);
+            }
+        }
+    })
+);
+
+
 export default router;

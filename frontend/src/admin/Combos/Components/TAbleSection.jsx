@@ -1,8 +1,9 @@
-import { ChevronLeft, ChevronRight, Loader2, Pencil, Trash } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2, Pencil, Trash, View } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { deleteCombos, getAllComobos } from '../Services/CombosServices'
 import { toast } from 'react-toastify'
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const TAbleSection = ({ openForm,openUpdateForm, setOpenForm,setOpenUpdateForm,setSelectedCombo}) => {
     const queryClient = useQueryClient();
@@ -269,6 +270,11 @@ const TAbleSection = ({ openForm,openUpdateForm, setOpenForm,setOpenUpdateForm,s
                                         onClick={() => handleDelete(Combo?.id)}>
                                         <Trash className='w-[10px] h-[10px]' />
                                     </button>
+                                    <Link to={`/admin/combos/view-combo/${Combo?.id}`}>
+                                        <button className="w-[30px] h-[30px] border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50">
+                                            <View className='w-[10px] h-[10px]' />
+                                        </button>
+                                    </Link>
                                 </div>
                             </td>
                         </tr>
