@@ -1,4 +1,4 @@
-import { registerUser, loginUser } from "../services/AuthService.js";
+import { registerUser, loginUser, getUserById } from "../services/AuthService.js";
 
 export const RegisterController = async (req, res) => {
     try {
@@ -33,6 +33,18 @@ export const LoginController = async (req, res) => {
                 errors: error.errors
             })
         }
+        return res.status(error.statusCode || 500).json({
+            message: error.message
+        });
+    }
+}
+
+
+export const GetUserController = async (req, res) => {
+    try {
+        const user = await getUserById(req.params.id);
+        res.status(200).json(user);
+    } catch (error) {
         return res.status(error.statusCode || 500).json({
             message: error.message
         });

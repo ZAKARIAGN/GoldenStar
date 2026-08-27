@@ -25,4 +25,27 @@ router.use(
     })
 );
 
+
+
+router.use(
+    "/get-all-orders",
+    authMiddleware,
+    createProxyMiddleware({
+        target: "http://order-service:5004",
+        changeOrigin: true,
+        pathRewrite: { "^/": "/order/get-all-orders" },
+        on: {
+            proxyReq: (proxyReq, req) => {
+                if (req.user) {
+                    proxyReq.setHeader(
+                        "x-user-id",
+                        req.user.userId
+                    );
+                }
+                fixRequestBody(proxyReq, req);
+            }
+        }
+    })
+);
+
 export default router;

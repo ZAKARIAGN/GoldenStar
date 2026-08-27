@@ -50,10 +50,7 @@ export const getItemByIdController = async (req, res) => {
 
         const result = await getItemById(id);
 
-        return res.status(200).json({
-            message: "Menu item fetched successfully",
-            data: result
-        });
+        return res.status(200).json(result);
 
     } catch (error) {
         return res.status(error.statusCode || 500).json({

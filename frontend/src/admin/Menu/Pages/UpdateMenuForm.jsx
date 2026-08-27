@@ -45,12 +45,12 @@ const UpdateMenuForm = () => {
     useEffect(() => {
         if (existingItem) {
             setItem({
-                name: existingItem?.data?.name,
-                description: existingItem?.data?.description,
-                price: existingItem?.data?.price,
-                category: existingItem?.data?.category,
+                name: existingItem?.name,
+                description: existingItem?.description,
+                price: existingItem?.price,
+                category: existingItem?.category,
             });
-            setPreview(`http://localhost:5002/${existingItem?.data?.image_path}`);
+            setPreview(`http://localhost:5002/${existingItem?.image_path}`);
         }
     }, [existingItem]);
 

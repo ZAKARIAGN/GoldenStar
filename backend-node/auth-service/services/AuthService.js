@@ -70,6 +70,25 @@ export const registerUser = async (data) => {
 
 
 
+export const getUserById = async (id) => {
+    const [rows] = await db.query(
+        "SELECT id, f_name, l_name FROM users WHERE id = ?",
+        [id]
+    );
+
+    if (rows.length === 0) {
+        const error = new Error("User not found");
+        error.statusCode = 404;
+        throw error;
+    }
+
+    return rows[0];
+};
+
+
+
+
+
 export const loginUser = async (data) => {
     const { email, password } = data;
 

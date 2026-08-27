@@ -336,7 +336,7 @@ export const getComboById = async (id, userId) => {
             }
         }
 
-        return Array.from(comboMap.values());
+        return Array.from(comboMap.values())[0];
     } catch (error) {
         if (error.response) {
             throw error;

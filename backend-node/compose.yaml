@@ -10,27 +10,42 @@ services:
       - combo-service
       - order-service
     command: npm run dev
+    volumes:
+      - ./api-gateway:/app
+      - /app/node_modules
 
   auth-service:
     build: ./auth-service
     ports:
       - "5001:5001"
     command: npm run dev
-
-  combo-service:
-    build: ./combo-service
-    ports:
-      - "5003:5003"
-    command: npm run dev
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules
 
   menu-service:
     build: ./menu-service
     ports:
       - "5002:5002"
     command: npm run dev
+    volumes:
+      - ./menu-service:/app
+      - /app/node_modules
+
+  combo-service:
+    build: ./combo-service
+    ports:
+      - "5003:5003"
+    command: npm run dev
+    volumes:
+      - ./combo-service:/app
+      - /app/node_modules
 
   order-service:
     build: ./order-service
     ports:
       - "5004:5004"
     command: npm run dev
+    volumes:
+      - ./order-service:/app
+      - /app/node_modules
