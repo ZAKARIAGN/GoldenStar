@@ -1,52 +1,78 @@
 import React from 'react';
-import { ShoppingBag, Clock, RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
+import { ShoppingBag, XCircle, Truck, PackageCheck, ChefHat, BadgeCheck, Clock3 } from 'lucide-react';
 
 const OrderCards = ({orders}) => {
 
     const cards = [
-        {
-            title: "Total Orders",
-            icon: <ShoppingBag size={20} className="text-orange-500" />,
-            value: orders?.length,
-            description: "All orders in system",
-            bgColor: "bg-orange-100/60"
-        },
-        {
-            title: "Pending",
-            icon: <Clock size={20} className="text-amber-500" />,
-            value: orders?.filter(order=>order.status.toLowerCase() ==='pending').length,
-            description: "Waiting for confirmation",
-            bgColor: "bg-amber-100/60"
-        },
-        {
-            title: "In Progress",
-            icon: <RefreshCw size={20} className="text-blue-500" />,
-            value: orders?.filter(order=>order.status.toLowerCase() ==='preparing').length,
-            description: "Being prepared",
-            bgColor: "bg-blue-100/60"
-        },
-        {
-            title: "Completed",
-            icon: <CheckCircle2 size={20} className="text-emerald-500" />,
-            value: orders?.filter(order=>order.status.toLowerCase() ==='confirmed').length,
-            description: "Successfully delivered",
-            bgColor: "bg-emerald-100/60"
-        },
-        {
-            title: "Cancelled",
-            icon: <XCircle size={20} className="text-rose-500" />,
-            value: orders?.filter(order=>order.status.toLowerCase() ==='cancelled').length,
-            description: "Cancelled orders",
-            bgColor: "bg-rose-100/60"
-        }
-    ];
+    {
+        title: "Total Orders",
+        icon: <ShoppingBag size={20} className="text-orange-500" />,
+        value: orders?.length || 0,
+        description: "All orders in system",
+        bgColor: "bg-orange-100/60"
+    },
+    {
+        title: "Pending",
+        icon: <Clock3 size={20} className="text-amber-500" />,
+        value: orders?.filter(
+            order => order.status?.toLowerCase() === "pending"
+        ).length || 0,
+        description: "Waiting for confirmation",
+        bgColor: "bg-amber-100/60"
+    },
+    {
+        title: "Confirmed",
+        icon: <BadgeCheck size={20} className="text-blue-500" />,
+        value: orders?.filter(
+            order => order.status?.toLowerCase() === "confirmed"
+        ).length || 0,
+        description: "Order confirmed",
+        bgColor: "bg-blue-100/60"
+    },
+    {
+        title: "Preparing",
+        icon: <ChefHat size={20} className="text-indigo-500" />,
+        value: orders?.filter(
+            order => order.status?.toLowerCase() === "preparing"
+        ).length || 0,
+        description: "Being prepared",
+        bgColor: "bg-indigo-100/60"
+    },
+    {
+        title: "Ready",
+        icon: <PackageCheck size={20} className="text-emerald-500" />,
+        value: orders?.filter(
+            order => order.status?.toLowerCase() === "ready"
+        ).length || 0,
+        description: "Ready for delivery",
+        bgColor: "bg-emerald-100/60"
+    },
+    {
+        title: "Delivered",
+        icon: <Truck size={20} className="text-green-600" />,
+        value: orders?.filter(
+            order => order.status?.toLowerCase() === "delivered"
+        ).length || 0,
+        description: "Successfully delivered",
+        bgColor: "bg-green-100/60"
+    },
+    {
+        title: "Cancelled",
+        icon: <XCircle size={20} className="text-rose-500" />,
+        value: orders?.filter(
+            order => order.status?.toLowerCase() === "cancelled"
+        ).length || 0,
+        description: "Cancelled orders",
+        bgColor: "bg-rose-100/60"
+    }
+];
 
     return (
         <div className="flex flex-wrap gap-4 p-4 bg-gray-50 justify-center">
             {cards.map((card, index) => (
                 <div
                     key={index}
-                    className="w-[193px] h-[97px] bg-white rounded-2xl p-3 border border-gray-100 shadow-sm flex flex-col justify-between"
+                    className="w-[160px] h-[97px] bg-white rounded-2xl p-3 border border-gray-100 shadow-sm flex flex-col justify-between"
                 >
                     <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${card.bgColor}`}>

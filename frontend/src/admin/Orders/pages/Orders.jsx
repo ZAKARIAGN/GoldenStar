@@ -6,10 +6,10 @@ import OrdersTable from '../Components/OrdersTable'
 import { useQuery } from '@tanstack/react-query'
 import { getAllOrders } from '../Services/OrdersServices'
 const Orders = () => {
-    const { data: orders } = useQuery({
-        queryKey: ['orders'],
-        queryFn: () => getAllOrders()
-    })
+  const { data: orders } = useQuery({
+    queryKey: ['orders'],
+    queryFn: () => getAllOrders()
+  })
   return (
     <div>
       <OrderNavbar />

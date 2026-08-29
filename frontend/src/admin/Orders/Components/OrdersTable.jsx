@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Calendar, ChevronDown, Filter, Eye, MoreVertical } from 'lucide-react';
+import { updateOrderStatus } from '../Services/OrdersServices';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 const OrdersTable = ({ orders }) => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("All Orders");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [statusToUpdate, setStatusToUpdate] = useState("");
 
   const tabs = [
     "All Orders",
     "Pending",
-    "In Progress",
-    "Completed",
+    "Confirmed",
+    "Preparing",
+    "Ready",
+    "Delivered",
     "Cancelled"
   ];
 
@@ -32,6 +41,74 @@ const OrdersTable = ({ orders }) => {
     }
   };
 
+
+
+  const mutation = useMutation({
+    mutationFn: ({ orderId, status }) => updateOrderStatus(orderId, { status }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      toast.success(data?.message || "Order status updated successfully", {
+        autoClose: 4000,
+        position: "top-right",
+        icon: "✅",
+        style: {
+          background: "#fff",
+          color: "#18181b",
+          border: "1px solid #cefeca",
+          borderRadius: "14px",
+          padding: "14px 18px",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
+          fontSize: "14px",
+          fontWeight: "600",
+        },
+      });
+    },
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Something went wrong";
+
+      toast.error(message, {
+        autoClose: 4000,
+        position: "top-right",
+        icon: "⚠️",
+        style: {
+          background: "#fff",
+          color: "#18181b",
+          border: "1px solid #fecaca",
+          borderRadius: "14px",
+          padding: "14px 18px",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
+          fontSize: "14px",
+          fontWeight: "600",
+        },
+      });
+    }
+  })
+
+
+  const HandleStatusChange = (orderId, status) => {
+    setStatusToUpdate(status);
+    mutation.mutate({ orderId, status });
+  }
+
+
+  const filteredOrders = useMemo(() => {
+    let ordersData = orders;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      ordersData = ordersData.filter((order) => {
+        const orderDate = new Date(order.created_at);
+        return orderDate >= start && orderDate <= end;
+      });
+    }
+    if (activeTab !== "All Orders") {
+      ordersData = ordersData.filter((order) => order.status === activeTab.toLocaleLowerCase());
+    }
+    return ordersData;
+  }, [orders, startDate, endDate, activeTab]);
+
   return (
     <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="w-full flex flex-wrap items-center justify-between border-b border-gray-100 px-6 py-2 gap-4">
@@ -42,9 +119,8 @@ const OrdersTable = ({ orders }) => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`relative py-4 text-sm font-medium transition-colors duration-200 ${
-                  isActive ? 'text-orange-600 font-semibold' : 'text-slate-500 hover:text-slate-800'
-                }`}
+                className={`relative py-4 text-sm font-medium transition-colors duration-200 ${isActive ? 'text-orange-600 font-semibold' : 'text-slate-500 hover:text-slate-800'
+                  }`}
               >
                 {tab}
                 {isActive && (
@@ -61,11 +137,14 @@ const OrdersTable = ({ orders }) => {
             <span>Filter</span>
           </button>
 
-          <button className="flex items-center gap-2 px-3.5 py-2 border border-gray-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-gray-50 transition-colors shadow-sm">
+          <div className="flex items-center gap-2 px-3.5 py-2 border border-gray-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-gray-50 transition-colors shadow-sm">
             <Calendar size={16} className="text-slate-500" />
-            <span>May 20, 2024 - May 26, 2024</span>
-            <ChevronDown size={16} className="text-slate-400" />
-          </button>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className='border-none outline-none' />
+          </div>
+          <div className="flex items-center gap-2 px-3.5 py-2 border border-gray-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-gray-50 transition-colors shadow-sm">
+            <Calendar size={16} className="text-slate-500" />
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className='border-none outline-none' />
+          </div>
         </div>
       </div>
 
@@ -85,9 +164,9 @@ const OrdersTable = ({ orders }) => {
 
           {/* Table Body */}
           <tbody className="divide-y divide-gray-100 text-sm">
-            {orders?.map((order) => {
+            {filteredOrders?.map((order) => {
               const nextItems = order.items && order.items.length > 1 ? `+ ${order.items.length - 1} more` : null;
-              
+
               return (
                 <tr key={order.id || order.ref} className="hover:bg-slate-50/50 transition-colors">
                   <td className="py-4 px-6 font-bold text-slate-800 whitespace-nowrap">
@@ -120,9 +199,42 @@ const OrdersTable = ({ orders }) => {
                     {order?.total_price} DH
                   </td>
                   <td className="py-4 px-6 whitespace-nowrap">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(order?.status)}`}>
-                      {order?.status}
-                    </span>
+                    <div className="relative inline-block">
+                      <select
+                        name="statusToUpdate"
+                        id="statusToUpdate"
+                        value={statusToUpdate || order?.status}
+                        onChange={(e) =>
+                          HandleStatusChange(order?.id, e.target.value)
+                        }
+                        className={`appearance-none pl-3 pr-9 py-2 rounded-full text-xs font-semibold cursor-pointer outline-none border transition-all duration-200 shadow-sm ${getStatusBadge(statusToUpdate || order?.status)}`}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="ready">Ready</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+
+                      {/* Custom Arrow */}
+                      <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m6 9 6 6 6-6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </td>
 
                   <td className="py-4 px-6 whitespace-nowrap">

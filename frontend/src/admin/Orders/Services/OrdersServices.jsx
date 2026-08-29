@@ -8,3 +8,13 @@ export const getAllOrders = async () => {
         return error.message
     }
 } 
+
+
+export const updateOrderStatus = async (orderId, {status, newStatus}) => {
+    try {
+        const response = await Api.patch(`/order/update-order-status/${orderId}`, { status, newStatus })
+        return response.data
+    } catch (error) {
+        return error.message
+    }
+}

@@ -42,6 +42,7 @@ router.use(
     createProxyMiddleware({
         target: "http://menu-service:5002",
         changeOrigin: true,
+
         pathRewrite: (path, req) => `/menu/get-item/${req.params.id}`,
 
         on: {

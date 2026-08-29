@@ -285,3 +285,51 @@ export const getAllOrders = async (userId) => {
         throw dbError;
     }
 }
+
+
+
+export const updateOrderStatus = async (orderId,newStatus) => {
+    const errors={}
+    if(!orderId){
+        errors.orderId="Please provide an orderId";
+    }
+    if(!newStatus){
+        errors.status="Please provide a new status";
+    }
+
+    const validStatuses = ["pending", "confirmed", "preparing", "ready", "delivered", "cancelled"];
+
+    if (!validStatuses.includes(newStatus.toLowerCase())) {
+        errors.status = "Invalid status. Please use one of the following: " + validStatuses.join(", ");
+    }
+    if(Object.keys(errors).length>0){
+        const error = new Error("Validation error");
+        error.statusCode = 400;
+        error.errors = errors;
+        throw error;
+    }
+    try{
+        const [result] = await db.query(
+            "update orders set status=? where id=?",
+            [newStatus,orderId]
+        )
+        if(result.affectedRows===0){
+            const error = new Error("Order not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        return {
+            message:"Order updated successfully",
+        }
+    }catch(error){
+        console.error("updateOrderStatus failed inside ordersServices.js:",error);
+        if(error.statusCode){
+            throw error;
+        }
+
+        const dbError = new Error("Failed to update order");
+        dbError.statusCode = 500;
+        dbError.detail = error.message;
+        throw dbError;
+    }
+}

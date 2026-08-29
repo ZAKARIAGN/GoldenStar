@@ -48,4 +48,29 @@ router.use(
     })
 );
 
+router.use(
+    "/update-order-status/:orderId",
+    authMiddleware,
+    createProxyMiddleware({
+        target: "http://order-service:5004",
+        changeOrigin: true,
+
+        pathRewrite: (path, req) =>
+            `/order/update-order-status/${req.params.orderId}`,
+
+        on: {
+            proxyReq: (proxyReq, req) => {
+                if (req.user) {
+                    proxyReq.setHeader(
+                        "x-user-id",
+                        req.user.userId
+                    );
+                }
+
+                fixRequestBody(proxyReq, req);
+            }
+        }
+    })
+);
+
 export default router;
