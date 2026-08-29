@@ -49,3 +49,13 @@ services:
     volumes:
       - ./order-service:/app
       - /app/node_modules
+
+  booking-service:
+    build: ./booking-service
+    ports:
+      - "5005:5005"
+    command: npm run dev
+    volumes:
+      - ./booking-service:/app
+      - /app/node_modules
+    

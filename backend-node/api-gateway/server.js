@@ -10,6 +10,7 @@ import menuRoutes from "./routes/menuRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import comboRoutes from "./routes/comboRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/menu", menuRoutes);
 app.use("/review", reviewRoutes);
 app.use("/combo", comboRoutes);
 app.use("/order", orderRoutes);
+app.use("/bookings", bookingRoutes);
 
 app.listen(5000, () => {
     console.log("API Gateway running on port 5000");
