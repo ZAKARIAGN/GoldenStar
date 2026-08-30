@@ -11,7 +11,7 @@ const SideBarAdmin = () => {
     { icon: <Carrot />, title: "Menu", lien: "/admin/menu" },
     { icon: <Package />, title: "Combos", lien: "/admin/combos" },
     { icon: <ChefHat />, title: "Orders", lien: "/admin/orders" },
-    { icon: <Calendar />, title: "Reservations", lien: "/admin/reservations" },
+    { icon: <Calendar />, title: "Bookings", lien: "/admin/bookings" },
     { icon: <Wallet />, title: "Wallet", lien: "/admin/wallet" },
     { icon: <Settings />, title: "Settings", lien: "/admin/settings" },
   ];

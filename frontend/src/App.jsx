@@ -26,6 +26,7 @@ import UpdateMenuForm from "./admin/Menu/Pages/UpdateMenuForm";
 import Combos from "./admin/Combos/Pages/Combos";
 import ViewCombo from "./admin/Combos/Pages/ViewCombo";
 import Orders from "./admin/Orders/Pages/Orders";
+import Bookings from "./admin/Bookings/Pages/Bookings";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="combos" element={<Combos />} />
               <Route path="combos/view-combo/:id" element={<ViewCombo/>}/>
               <Route path="orders" element={<Orders />} />
+              <Route path="bookings" element={<Bookings />} />
             {/*   <Route path="orders" element={<Orders />} />
 
               <Route path="reservations" element={<Reservations />} /> */}

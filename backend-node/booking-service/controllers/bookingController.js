@@ -38,8 +38,7 @@ export const getAllBookingsController = async (req, res) => {
     } catch (error) {
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).json({
-            message: error.message,
-            errors: error.errors || null
+            message: error.message
         });
     }
 }
